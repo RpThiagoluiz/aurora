@@ -2,7 +2,7 @@
 
 ## 📋 Estrutura de Navegação
 
-Sistema de navegação implementado com **React Navigation v6** usando Tab Navigation com ícones emoji.
+Sistema de navegação implementado com **React Navigation v6** usando Tab Navigation com **Ionicons**.
 
 ## 🏗️ Arquitetura da Navegação
 
@@ -17,10 +17,15 @@ src/
 ├── screens/            # 📱 Telas gerais
 │   ├── HomeScreen.tsx     # Tela principal
 │   └── index.ts
-└── modules/todo/
-    └── screens/        # 📝 Telas específicas do módulo
-        ├── AddTodoScreen.tsx
-        └── index.ts
+└── modules/
+    ├── todo/
+    │   └── screens/    # 📝 Telas do módulo TODO
+    │       ├── AddTodoScreen.tsx
+    │       └── index.ts
+    └── settings/
+        └── screens/    # ⚙️ Telas do módulo Settings
+            ├── SettingsScreen.tsx
+            └── index.ts
 ```
 
 ## 🎨 Telas Implementadas
@@ -45,15 +50,27 @@ src/
   - Campos título e descrição
   - Botão de salvamento estilizado
 
+### ⚙️ SettingsScreen
+
+- **Localização**: `src/modules/settings/screens/SettingsScreen.tsx`
+- **Função**: Tela de configurações da aplicação
+- **Recursos**:
+  - Interface minimalista
+  - Typography component para texto
+  - Layout centralizado
+
 ## 🎯 Tab Navigation
 
 ### Configuração
 
-- **2 Tabs**: Home e AddTodo
-- **Sem Labels**: Apenas ícones emoji
+- **3 Tabs**: Home, AddTodo e Settings
+- **Sem Labels**: Apenas ícones Ionicons
 - **Ícones**:
-  - 🏠 Home (focused/unfocused)
-  - ➕ Add Todo (focused/unfocused)
+  - 🏠 Home: `home` / `home-outline`
+  - ➕ AddTodo: `add-circle` / `add-circle-outline`
+  - ⚙️ Settings: `settings` / `settings-outline`
+- **Estados**: Ícone preenchido quando ativo, outline quando inativo
+- **Cores**: `ACCENT_PRIMARY` quando focado, `TEXT_SECONDARY` quando não focado
 
 ### Tema Integrado
 
@@ -77,6 +94,9 @@ navigation.navigate('Home')
 
 // Navegar para AddTodo
 navigation.navigate('AddTodo')
+
+// Navegar para Settings
+navigation.navigate('Settings')
 ```
 
 ### Acessar Parâmetros de Rota

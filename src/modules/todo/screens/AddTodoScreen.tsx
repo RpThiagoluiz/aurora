@@ -253,14 +253,14 @@ export const AddTodoScreen = () => {
         <Button
           title="Limpar"
           variant="secondary"
-          icon="🗑️"
+          iconName="trash-outline"
           onPress={handleCancel}
           fullWidth
         />
         <Button
           title="Salvar"
           variant="primary"
-          icon="💾"
+          iconName="save-outline"
           onPress={handleSubmit(onSubmit)}
           fullWidth
           loading={isSubmitting}

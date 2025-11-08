@@ -1,14 +1,17 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
-import { Platform, StyleSheet, Text } from 'react-native'
+import { Platform } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 import { useTheme } from '../hooks'
+import { SettingsScreen } from '../modules/settings'
 import { AddTodoScreen } from '../modules/todo'
 import { HomeScreen } from '../screens'
 
 export type TabParamList = {
   Home: undefined
   AddTodo: undefined
+  Settings: undefined
 }
 
 const Tab = createBottomTabNavigator<TabParamList>()
@@ -21,28 +24,29 @@ export const TabNavigator = () => {
     focused: boolean,
     size: number,
   ) => {
-    let iconText: string
+    let iconName: string
 
     switch (routeName) {
       case 'Home':
-        iconText = '🏠'
+        iconName = focused ? 'home' : 'home-outline'
         break
       case 'AddTodo':
-        iconText = '➕'
+        iconName = focused ? 'add-circle' : 'add-circle-outline'
+        break
+      case 'Settings':
+        iconName = focused ? 'settings' : 'settings-outline'
         break
       default:
-        iconText = '❓'
+        iconName = 'help-outline'
     }
 
-    const iconStyles = StyleSheet.create({
-      icon: {
-        fontSize: size - 4,
-        opacity: focused ? 1 : 0.6,
-        color: focused ? colors.ACCENT_PRIMARY : colors.TEXT_SECONDARY,
-      },
-    })
-
-    return <Text style={iconStyles.icon}>{iconText}</Text>
+    return (
+      <Icon
+        name={iconName}
+        size={size}
+        color={focused ? colors.ACCENT_PRIMARY : colors.TEXT_SECONDARY}
+      />
+    )
   }
 
   return (
@@ -74,7 +78,16 @@ export const TabNavigator = () => {
         },
         headerTintColor: colors.TEXT_PRIMARY,
       })}
+      initialRouteName="Home"
     >
+      <Tab.Screen
+        name="AddTodo"
+        component={AddTodoScreen}
+        options={{
+          headerTitle: 'Nova Tarefa',
+        }}
+      />
+
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -82,11 +95,12 @@ export const TabNavigator = () => {
           headerTitle: 'Aurora',
         }}
       />
+
       <Tab.Screen
-        name="AddTodo"
-        component={AddTodoScreen}
+        name="Settings"
+        component={SettingsScreen}
         options={{
-          headerTitle: 'Nova Tarefa',
+          headerTitle: 'Configurações',
         }}
       />
     </Tab.Navigator>

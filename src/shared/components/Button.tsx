@@ -6,6 +6,7 @@ import {
   TouchableOpacityProps,
   View,
 } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 import { useTheme } from '../../hooks'
 
@@ -13,6 +14,7 @@ export interface ButtonProps extends TouchableOpacityProps {
   title: string
   variant?: 'primary' | 'secondary'
   icon?: string
+  iconName?: string // Para Ionicons
   loading?: boolean
   fullWidth?: boolean
 }
@@ -21,6 +23,7 @@ export const Button = ({
   title,
   variant = 'primary',
   icon,
+  iconName,
   loading = false,
   fullWidth = false,
   disabled,
@@ -76,7 +79,7 @@ export const Button = ({
       justifyContent: 'center',
     },
     icon: {
-      marginRight: icon ? 8 : 0,
+      marginRight: icon || iconName ? 8 : 0,
     },
     iconText: {
       fontSize: 18,
@@ -100,8 +103,14 @@ export const Button = ({
       {...props}
     >
       <View style={buttonStyles.content}>
-        {icon && !loading && (
-          <Text style={[buttonStyles.iconText, buttonStyles.icon]}>{icon}</Text>
+        {(icon || iconName) && !loading && (
+          <View style={buttonStyles.icon}>
+            {iconName ? (
+              <Icon name={iconName} size={18} color={getTextColor()} />
+            ) : (
+              <Text style={buttonStyles.iconText}>{icon}</Text>
+            )}
+          </View>
         )}
         <Text style={[buttonStyles.title, loading && buttonStyles.loadingText]}>
           {loading ? 'Carregando...' : title}
