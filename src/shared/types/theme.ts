@@ -13,4 +13,4 @@ export interface Theme {
   colors: Colors
 }
 
-export type ThemeType = 'dark'
+export type ThemeType = 'light' | 'dark' | 'auto'

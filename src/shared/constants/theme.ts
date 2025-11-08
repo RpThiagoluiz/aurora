@@ -1,5 +1,16 @@
 import { Colors, Theme } from '../types'
 
+export const LIGHT_COLORS: Colors = {
+  BACKGROUND_PRIMARY: '#FFFFFF',
+  BACKGROUND_SECONDARY: '#F5F5F5',
+  TEXT_PRIMARY: '#1C1C1E',
+  TEXT_SECONDARY: '#6C6C70',
+  ACCENT_PRIMARY: '#007AFF',
+  WARNING: '#FF9500',
+  STATUS_COMPLETE: '#34C759',
+  STATUS_DELETE: '#FF3B30',
+}
+
 export const DARK_COLORS: Colors = {
   BACKGROUND_PRIMARY: '#121212',
   BACKGROUND_SECONDARY: '#1E1E1E',
@@ -11,10 +22,15 @@ export const DARK_COLORS: Colors = {
   STATUS_DELETE: '#FF453A',
 }
 
+export const LIGHT_THEME: Theme = {
+  colors: LIGHT_COLORS,
+}
+
 export const DARK_THEME: Theme = {
   colors: DARK_COLORS,
 }
 
 export const THEMES = {
+  light: LIGHT_THEME,
   dark: DARK_THEME,
 }
