@@ -1,8 +1,37 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Aurora - Todo App
 
-# Getting Started
+## 📱 Sobre o Projeto
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+Todo app. O projeto implementa um gerenciador de tarefas com funcionalidades completas e arquitetura escalável.
+
+## 🏗️ Arquitetura
+
+O projeto segue uma arquitetura modular e organizada:
+
+```
+src/
+├── shared/          # Componentes, tipos e utilitários compartilhados
+├── modules/         # Módulos específicos (todo, auth, etc.)
+├── hooks/           # Custom hooks reutilizáveis
+└── services/        # Serviços (database, API)
+```
+
+## 🛠️ Tecnologias Utilizadas
+
+- **React Native** 0.82.1
+- **TypeScript** - Tipagem estática
+- **AsyncStorage** - Persistência local
+- **ESLint** - Linting rigoroso para código sênior
+- **Prettier** - Formatação consistente
+- **Husky** - Git hooks para validações
+- **CommitLint** - Padronização de commits convencionais
+- **GitHub Actions** - CI/CD pipeline
+
+## 🚀 Configuração de Desenvolvimento
+
+### Pré-requisitos
+
+> **Nota**: Certifique-se de ter completado o [Guia de Configuração do Ambiente](https://reactnative.dev/docs/set-up-your-environment) antes de prosseguir.
 
 ## Step 1: Start Metro
 
