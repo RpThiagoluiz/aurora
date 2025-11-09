@@ -5,8 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 import { useTheme } from '../hooks'
 import { SettingsScreen } from '../modules/settings'
-import { AddTodoScreen } from '../modules/todo'
-import { HomeScreen } from '../screens'
+import { HomeScreen, AddTodoScreen } from '../modules/todo'
 import { Colors } from '../shared/types'
 
 export type TabParamList = {
