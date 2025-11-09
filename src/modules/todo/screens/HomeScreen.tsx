@@ -1,6 +1,15 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components/native'
-import { Typography, Loading, useTodos } from '../../../shared'
+import { useNavigation } from '@react-navigation/native'
+import { NavigationProp } from '@react-navigation/native'
+import {
+  Typography,
+  Loading,
+  useTodos,
+  PriorityBadge,
+  StatusBadge,
+} from '../../../shared'
+import { RootStackParamList } from '../../../navigation/StackNavigator'
 
 const Container = styled.View`
   flex: 1;
@@ -58,9 +67,10 @@ const StatLabel = styled.View`
 
 const TaskList = styled.View`
   gap: 12px;
+  padding-bottom: 40px;
 `
 
-const TaskItem = styled.View`
+const TaskItem = styled.TouchableOpacity`
   background-color: ${props =>
     (props.theme as any).colors.BACKGROUND_SECONDARY};
   padding: 16px;
@@ -68,7 +78,23 @@ const TaskItem = styled.View`
   gap: 8px;
 `
 
+const TaskHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`
+
+const TaskTitle = styled.View`
+  flex: 1;
+`
+
+const BadgeColumn = styled.View`
+  gap: 12px;
+  align-items: flex-end;
+`
+
 export const HomeScreen = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { todos, isLoading, get } = useTodos()
 
   const completedTodos = todos.filter(todo => todo.completed)
@@ -77,6 +103,10 @@ export const HomeScreen = () => {
   useEffect(() => {
     get()
   }, [get])
+
+  const handleTodoPress = (todoId: string) => {
+    navigation.navigate('TodoDetail', { todoId })
+  }
 
   console.log('Rendering HomeScreen with todos:', todos)
 
@@ -158,13 +188,24 @@ export const HomeScreen = () => {
           ) : (
             <TaskList>
               {todos.slice(0, 5).map(todo => (
-                <TaskItem key={todo.id}>
-                  <Typography
-                    variant="body1"
-                    color={todo.completed ? 'success' : 'primary'}
-                  >
-                    {todo.title}
-                  </Typography>
+                <TaskItem
+                  key={todo.id}
+                  onPress={() => handleTodoPress(todo.id)}
+                >
+                  <TaskHeader>
+                    <TaskTitle>
+                      <Typography
+                        variant="body1"
+                        color={todo.completed ? 'success' : 'primary'}
+                      >
+                        {todo.title}
+                      </Typography>
+                    </TaskTitle>
+                    <BadgeColumn>
+                      <PriorityBadge priority={todo.priority} />
+                      <StatusBadge completed={todo.completed} />
+                    </BadgeColumn>
+                  </TaskHeader>
                   {todo.description && (
                     <Typography variant="caption" color="secondary">
                       {todo.description}
