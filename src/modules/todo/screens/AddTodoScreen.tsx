@@ -1,10 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
 import { Button, Typography } from '../../../shared/components'
+import { useTodos } from '../../../shared/context'
 import { TaskFormData, taskFormSchema } from '../../../shared/types'
 
 // Styled Components
@@ -92,11 +93,14 @@ const ButtonsContainer = styled.View`
 `
 
 export const AddTodoScreen = () => {
+  const { add } = useTodos()
+  const [isSaving, setIsSaving] = useState(false)
+
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     watch,
   } = useForm({
     resolver: zodResolver(taskFormSchema),
@@ -134,15 +138,34 @@ export const AddTodoScreen = () => {
     }
   }
 
-  const onSubmit = (_data: TaskFormData) => {
-    Alert.alert('Sucesso', 'Tarefa criada com sucesso!', [
-      {
-        text: 'OK',
-        onPress: () => {
-          reset()
-        },
-      },
-    ])
+  const onSubmit = async (data: TaskFormData) => {
+    setIsSaving(true)
+    try {
+      const success = await add({
+        title: data.title,
+        description: data.description || undefined,
+        priority: data.priority,
+        completed: false,
+      })
+
+      if (success) {
+        Alert.alert('Sucesso', 'Tarefa criada com sucesso!', [
+          {
+            text: 'OK',
+            onPress: () => {
+              reset()
+            },
+          },
+        ])
+      } else {
+        Alert.alert('Erro', 'Erro ao salvar a tarefa. Tente novamente.')
+      }
+    } catch (error) {
+      console.error('Erro ao salvar tarefa:', error)
+      Alert.alert('Erro', 'Erro inesperado ao salvar a tarefa.')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const getPriorityColor = (selectedPriority: string) => {
@@ -256,6 +279,7 @@ export const AddTodoScreen = () => {
           iconName="trash-outline"
           onPress={handleCancel}
           fullWidth
+          disabled={isSaving}
         />
         <Button
           title="Salvar"
@@ -263,7 +287,7 @@ export const AddTodoScreen = () => {
           iconName="save-outline"
           onPress={handleSubmit(onSubmit)}
           fullWidth
-          loading={isSubmitting}
+          loading={isSaving}
         />
       </ButtonsContainer>
     </Container>
