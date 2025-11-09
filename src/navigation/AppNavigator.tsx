@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import React from 'react'
 
 import { useTheme } from '../hooks'
-import { TabNavigator } from './TabNavigator'
+import { StackNavigator } from './StackNavigator'
 
 export const AppNavigator = () => {
   const { colors } = useTheme()
@@ -39,7 +39,7 @@ export const AppNavigator = () => {
 
   return (
     <NavigationContainer theme={navigationTheme}>
-      <TabNavigator />
+      <StackNavigator />
     </NavigationContainer>
   )
 }

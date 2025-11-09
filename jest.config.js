@@ -1,7 +1,7 @@
 module.exports = {
   preset: 'react-native',
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-navigation|styled-components)/)',
+    'node_modules/(?!(react-native|@react-native|@react-navigation|@react-native-async-storage|styled-components)/)',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 }
