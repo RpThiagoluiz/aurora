@@ -37,6 +37,9 @@ export const StackNavigator = () => {
         component={TodoDetailScreen}
         options={{
           title: 'Detalhes da Tarefa',
+          presentation: 'modal',
+          animationTypeForReplace: 'push',
+          animation: 'slide_from_bottom',
         }}
       />
     </Stack.Navigator>
