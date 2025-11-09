@@ -1,126 +1,123 @@
 import React from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import styled from 'styled-components/native'
 
-import { useTheme } from '../hooks'
 import { Typography } from '../shared/components'
 
+const Container = styled.View`
+  flex: 1;
+  background-color: ${props => (props.theme as any).colors.BACKGROUND_PRIMARY};
+`
+
+const Content = styled.ScrollView.attrs({
+  showsVerticalScrollIndicator: false,
+})`
+  flex: 1;
+  padding: 20px;
+`
+
+const Header = styled.View`
+  margin-bottom: 24px;
+  gap: 8px;
+`
+
+const Section = styled.View`
+  margin-bottom: 24px;
+  gap: 12px;
+`
+
+const TaskCard = styled.View`
+  background-color: ${props =>
+    (props.theme as any).colors.BACKGROUND_SECONDARY};
+  padding: 16px;
+  border-radius: 12px;
+  align-items: center;
+  gap: 4px;
+`
+
+const StatsContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`
+
+const StatCard = styled.View`
+  flex: 1;
+  background-color: ${props =>
+    (props.theme as any).colors.BACKGROUND_SECONDARY};
+  padding: 16px;
+  border-radius: 12px;
+  margin: 0 4px;
+  align-items: center;
+`
+
+const StatNumber = styled.View`
+  margin-bottom: 4px;
+`
+
+const StatLabel = styled.View`
+  text-align: center;
+`
+
 export const HomeScreen = () => {
-  const { colors } = useTheme()
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.BACKGROUND_PRIMARY,
-    },
-    content: {
-      flex: 1,
-      padding: 20,
-    },
-    header: {
-      marginBottom: 24,
-      gap: 8,
-    },
-    section: {
-      marginBottom: 24,
-      gap: 12,
-    },
-    taskCard: {
-      backgroundColor: colors.BACKGROUND_SECONDARY,
-      padding: 16,
-      borderRadius: 12,
-      alignItems: 'center',
-      gap: 4,
-    },
-    statsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    statCard: {
-      flex: 1,
-      backgroundColor: colors.BACKGROUND_SECONDARY,
-      padding: 16,
-      borderRadius: 12,
-      marginHorizontal: 4,
-      alignItems: 'center',
-    },
-    statNumber: {
-      marginBottom: 4,
-    },
-    statLabel: {
-      textAlign: 'center',
-    },
-  })
-
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
+    <Container>
+      <Content>
+        <Header>
           <Typography variant="h2">Olá! 👋</Typography>
           <Typography variant="body1" color="secondary">
             Bem-vindo ao Aurora, seu gerenciador de tarefas inteligente.
           </Typography>
-        </View>
+        </Header>
 
-        <View style={styles.section}>
+        <Section>
           <Typography variant="subtitle1">Resumo de Hoje</Typography>
-          <View style={styles.statsContainer}>
-            <View style={styles.statCard}>
-              <Typography variant="h1" style={styles.statNumber}>
-                0
-              </Typography>
-              <Typography
-                variant="caption"
-                color="secondary"
-                style={styles.statLabel}
-              >
-                Total de{'\n'}Tarefas
-              </Typography>
-            </View>
-            <View style={styles.statCard}>
-              <Typography
-                variant="h1"
-                color="success"
-                style={styles.statNumber}
-              >
-                0
-              </Typography>
-              <Typography
-                variant="caption"
-                color="secondary"
-                style={styles.statLabel}
-              >
-                Concluídas
-              </Typography>
-            </View>
-            <View style={styles.statCard}>
-              <Typography
-                variant="h1"
-                color="warning"
-                style={styles.statNumber}
-              >
-                0
-              </Typography>
-              <Typography
-                variant="caption"
-                color="secondary"
-                style={styles.statLabel}
-              >
-                Pendentes
-              </Typography>
-            </View>
-          </View>
-        </View>
+          <StatsContainer>
+            <StatCard>
+              <StatNumber>
+                <Typography variant="h1">0</Typography>
+              </StatNumber>
+              <StatLabel>
+                <Typography variant="caption" color="secondary">
+                  Total de{'\n'}Tarefas
+                </Typography>
+              </StatLabel>
+            </StatCard>
+            <StatCard>
+              <StatNumber>
+                <Typography variant="h1" color="success">
+                  0
+                </Typography>
+              </StatNumber>
+              <StatLabel>
+                <Typography variant="caption" color="secondary">
+                  Concluídas
+                </Typography>
+              </StatLabel>
+            </StatCard>
+            <StatCard>
+              <StatNumber>
+                <Typography variant="h1" color="warning">
+                  0
+                </Typography>
+              </StatNumber>
+              <StatLabel>
+                <Typography variant="caption" color="secondary">
+                  Pendentes
+                </Typography>
+              </StatLabel>
+            </StatCard>
+          </StatsContainer>
+        </Section>
 
-        <View style={styles.section}>
+        <Section>
           <Typography variant="subtitle1">Tarefas Recentes</Typography>
-          <View style={styles.taskCard}>
+          <TaskCard>
             <Typography variant="body1">Nenhuma tarefa encontrada</Typography>
             <Typography variant="caption" color="secondary">
               Adicione sua primeira tarefa usando o botão + abaixo
             </Typography>
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+          </TaskCard>
+        </Section>
+      </Content>
+    </Container>
   )
 }

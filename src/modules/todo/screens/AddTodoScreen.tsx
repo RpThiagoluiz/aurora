@@ -1,21 +1,97 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { Alert } from 'react-native'
+import styled from 'styled-components/native'
 
-import { useTheme } from '../../../hooks'
 import { Button, Typography } from '../../../shared/components'
 import { TaskFormData, taskFormSchema } from '../../../shared/types'
 
+// Styled Components
+const Container = styled.View`
+  flex: 1;
+  background-color: ${props => (props.theme as any).colors.BACKGROUND_PRIMARY};
+`
+
+const Content = styled.ScrollView.attrs({
+  showsVerticalScrollIndicator: false,
+})`
+  flex: 1;
+  padding: 20px;
+`
+
+const Header = styled.View`
+  margin-bottom: 24px;
+  gap: 8px;
+`
+
+const Section = styled.View`
+  margin-bottom: 24px;
+  gap: 8px;
+`
+
+const StyledInput = styled.TextInput<{ hasError?: boolean }>`
+  background-color: ${props =>
+    (props.theme as any).colors.BACKGROUND_SECONDARY};
+  border-radius: 12px;
+  padding: 16px;
+  color: ${props => (props.theme as any).colors.TEXT_PRIMARY};
+  font-size: 16px;
+  min-height: 56px;
+  border-width: ${props => (props.hasError ? 2 : 0)}px;
+  border-color: ${props =>
+    props.hasError ? (props.theme as any).colors.STATUS_DELETE : 'transparent'};
+`
+
+const TextAreaInput = styled(StyledInput).attrs({
+  textAlignVertical: 'top',
+})`
+  min-height: 100px;
+`
+
+const PriorityContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`
+
+const PriorityButton = styled.TouchableOpacity<{ isActive: boolean }>`
+  flex: 1;
+  background-color: ${props =>
+    (props.theme as any).colors.BACKGROUND_SECONDARY};
+  padding: 16px;
+  border-radius: 12px;
+  margin: 0 4px;
+  align-items: center;
+  border-width: 2px;
+  border-color: ${props =>
+    props.isActive
+      ? (props.theme as any).colors.ACCENT_PRIMARY
+      : 'transparent'};
+`
+
+const PriorityIcon = styled.View<{ priorityColor: string }>`
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: ${props => props.priorityColor};
+`
+
+const PriorityText = styled.View`
+  margin-top: 4px;
+`
+
+const ErrorText = styled.View`
+  margin-top: 4px;
+`
+
+const ButtonsContainer = styled.View`
+  flex-direction: row;
+  gap: 12px;
+  padding: 20px;
+  margin-top: auto;
+`
+
 export const AddTodoScreen = () => {
-  const { colors } = useTheme()
   const {
     control,
     handleSubmit,
@@ -72,184 +148,108 @@ export const AddTodoScreen = () => {
   const getPriorityColor = (selectedPriority: string) => {
     switch (selectedPriority) {
       case 'high':
-        return colors.STATUS_DELETE
+        return '#FF453A' // STATUS_DELETE
       case 'medium':
-        return colors.ACCENT_PRIMARY
+        return '#0A84FF' // ACCENT_PRIMARY
       case 'low':
-        return colors.STATUS_COMPLETE
+        return '#6FCF97' // STATUS_COMPLETE
       default:
-        return colors.TEXT_SECONDARY
+        return '#A0A0A0' // TEXT_SECONDARY
     }
   }
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.BACKGROUND_PRIMARY,
-    },
-    content: {
-      flex: 1,
-      padding: 20,
-    },
-    header: {
-      marginBottom: 24,
-      gap: 8,
-    },
-    section: {
-      marginBottom: 24,
-      gap: 8,
-    },
-    input: {
-      backgroundColor: colors.BACKGROUND_SECONDARY,
-      borderRadius: 12,
-      padding: 16,
-      color: colors.TEXT_PRIMARY,
-      fontSize: 16,
-      minHeight: 56,
-    },
-    textArea: {
-      minHeight: 100,
-      textAlignVertical: 'top',
-    },
-    priorityContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    priorityButton: {
-      flex: 1,
-      backgroundColor: colors.BACKGROUND_SECONDARY,
-      padding: 16,
-      borderRadius: 12,
-      marginHorizontal: 4,
-      alignItems: 'center',
-      borderWidth: 2,
-      borderColor: 'transparent',
-    },
-    priorityButtonActive: {
-      borderColor: colors.ACCENT_PRIMARY,
-    },
-    priorityText: {
-      marginTop: 4,
-    },
-    priorityIcon: {
-      width: 20,
-      height: 20,
-      borderRadius: 10,
-    },
-    errorText: {
-      marginTop: 4,
-    },
-    buttonsContainer: {
-      flexDirection: 'row',
-      gap: 12,
-      paddingHorizontal: 20,
-      paddingBottom: 20,
-      marginTop: 'auto',
-    },
-  })
-
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
+    <Container>
+      <Content>
+        <Header>
           <Typography variant="h2">Nova Tarefa ✨</Typography>
           <Typography variant="body1" color="secondary">
             Adicione uma nova tarefa à sua lista
           </Typography>
-        </View>
-        <View style={styles.section}>
+        </Header>
+
+        <Section>
           <Typography variant="subtitle2">Título *</Typography>
           <Controller
             control={control}
             name="title"
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={[
-                  styles.input,
-                  { borderColor: colors.BACKGROUND_SECONDARY },
-                ]}
+              <StyledInput
                 placeholder="Digite o título da tarefa"
-                placeholderTextColor={colors.TEXT_SECONDARY}
+                placeholderTextColor="#A0A0A0"
                 value={value}
                 onChangeText={onChange}
+                hasError={!!errors.title}
               />
             )}
           />
           {errors.title && (
-            <Typography
-              variant="caption"
-              color="error"
-              style={styles.errorText}
-            >
-              {errors.title.message}
-            </Typography>
+            <ErrorText>
+              <Typography variant="caption" color="error">
+                {errors.title.message}
+              </Typography>
+            </ErrorText>
           )}
-        </View>
-        <View style={styles.section}>
+        </Section>
+
+        <Section>
           <Typography variant="subtitle2">Descrição (opcional)</Typography>
           <Controller
             control={control}
             name="description"
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                style={[styles.input, styles.textArea]}
+              <TextAreaInput
                 placeholder="Adicione uma descrição detalhada..."
-                placeholderTextColor={colors.TEXT_SECONDARY}
+                placeholderTextColor="#A0A0A0"
                 value={value}
                 onChangeText={onChange}
                 multiline
                 maxLength={500}
+                hasError={!!errors.description}
               />
             )}
           />
           {errors.description && (
-            <Typography
-              variant="caption"
-              color="error"
-              style={styles.errorText}
-            >
-              {errors.description.message}
-            </Typography>
+            <ErrorText>
+              <Typography variant="caption" color="error">
+                {errors.description.message}
+              </Typography>
+            </ErrorText>
           )}
-        </View>
-        <View style={styles.section}>
+        </Section>
+
+        <Section>
           <Typography variant="subtitle2">Prioridade</Typography>
           <Controller
             control={control}
             name="priority"
             render={({ field: { onChange, value } }) => (
-              <View style={styles.priorityContainer}>
+              <PriorityContainer>
                 {(['low', 'medium', 'high'] as const).map(p => (
-                  <TouchableOpacity
+                  <PriorityButton
                     key={p}
-                    style={[
-                      styles.priorityButton,
-                      value === p && styles.priorityButtonActive,
-                    ]}
+                    isActive={value === p}
                     onPress={() => onChange(p)}
                   >
-                    <View
-                      style={[
-                        styles.priorityIcon,
-                        { backgroundColor: getPriorityColor(p) },
-                      ]}
-                    />
-                    <Typography variant="body2" style={styles.priorityText}>
-                      {p === 'low'
-                        ? 'Baixa'
-                        : p === 'medium'
-                          ? 'Média'
-                          : 'Alta'}
-                    </Typography>
-                  </TouchableOpacity>
+                    <PriorityIcon priorityColor={getPriorityColor(p)} />
+                    <PriorityText>
+                      <Typography variant="body2">
+                        {p === 'low'
+                          ? 'Baixa'
+                          : p === 'medium'
+                            ? 'Média'
+                            : 'Alta'}
+                      </Typography>
+                    </PriorityText>
+                  </PriorityButton>
                 ))}
-              </View>
+              </PriorityContainer>
             )}
           />
-        </View>
-      </ScrollView>
+        </Section>
+      </Content>
 
-      <View style={styles.buttonsContainer}>
+      <ButtonsContainer>
         <Button
           title="Limpar"
           variant="secondary"
@@ -265,7 +265,7 @@ export const AddTodoScreen = () => {
           fullWidth
           loading={isSubmitting}
         />
-      </View>
-    </View>
+      </ButtonsContainer>
+    </Container>
   )
 }

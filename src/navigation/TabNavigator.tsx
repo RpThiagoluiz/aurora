@@ -7,6 +7,7 @@ import { useTheme } from '../hooks'
 import { SettingsScreen } from '../modules/settings'
 import { AddTodoScreen } from '../modules/todo'
 import { HomeScreen } from '../screens'
+import { Colors } from '../shared/types'
 
 export type TabParamList = {
   Home: undefined
@@ -16,8 +17,33 @@ export type TabParamList = {
 
 const Tab = createBottomTabNavigator<TabParamList>()
 
+// Helper para criar estilos do tab navigator
+const getTabBarStyles = (colors: Colors) => ({
+  tabBarStyle: {
+    backgroundColor: colors.BACKGROUND_SECONDARY,
+    borderTopColor: colors.BACKGROUND_SECONDARY,
+    borderTopWidth: 1,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 10,
+    paddingTop: 10,
+    height: Platform.OS === 'ios' ? 90 : 70,
+  },
+  headerStyle: {
+    backgroundColor: colors.BACKGROUND_PRIMARY,
+    borderBottomColor: colors.BACKGROUND_SECONDARY,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  headerTitleStyle: {
+    color: colors.TEXT_PRIMARY,
+    fontSize: 20,
+    fontWeight: '600' as const,
+  },
+})
+
 export const TabNavigator = () => {
   const { colors } = useTheme()
+
+  const tabStyles = getTabBarStyles(colors)
 
   const renderTabIcon = (
     routeName: keyof TabParamList,
@@ -56,27 +82,9 @@ export const TabNavigator = () => {
           renderTabIcon(route.name, focused, size),
         tabBarActiveTintColor: colors.ACCENT_PRIMARY,
         tabBarInactiveTintColor: colors.TEXT_SECONDARY,
-        tabBarStyle: {
-          backgroundColor: colors.BACKGROUND_SECONDARY,
-          borderTopColor: colors.BACKGROUND_SECONDARY,
-          borderTopWidth: 1,
-          paddingBottom: Platform.OS === 'ios' ? 20 : 10,
-          paddingTop: 10,
-          height: Platform.OS === 'ios' ? 90 : 70,
-        },
         tabBarShowLabel: false,
-        headerStyle: {
-          backgroundColor: colors.BACKGROUND_PRIMARY,
-          borderBottomColor: colors.BACKGROUND_SECONDARY,
-          elevation: 0,
-          shadowOpacity: 0,
-        },
-        headerTitleStyle: {
-          color: colors.TEXT_PRIMARY,
-          fontSize: 20,
-          fontWeight: '600',
-        },
         headerTintColor: colors.TEXT_PRIMARY,
+        ...tabStyles,
       })}
       initialRouteName="Home"
     >
