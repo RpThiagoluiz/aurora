@@ -1,6 +1,6 @@
-import React from 'react'
+import { useEffect } from 'react'
 import styled from 'styled-components/native'
-import { Typography } from '../../../shared'
+import { Typography, Loading, useTodos } from '../../../shared'
 
 const Container = styled.View`
   flex: 1;
@@ -56,7 +56,46 @@ const StatLabel = styled.View`
   text-align: center;
 `
 
+const TaskList = styled.View`
+  gap: 12px;
+`
+
+const TaskItem = styled.View`
+  background-color: ${props =>
+    (props.theme as any).colors.BACKGROUND_SECONDARY};
+  padding: 16px;
+  border-radius: 12px;
+  gap: 8px;
+`
+
 export const HomeScreen = () => {
+  const { todos, isLoading, get } = useTodos()
+
+  const completedTodos = todos.filter(todo => todo.completed)
+  const pendingTodos = todos.filter(todo => !todo.completed)
+
+  useEffect(() => {
+    get()
+  }, [get])
+
+  console.log('Rendering HomeScreen with todos:', todos)
+
+  if (isLoading) {
+    return (
+      <Container>
+        <Content>
+          <Header>
+            <Typography variant="h2">Olá! 👋</Typography>
+            <Typography variant="body1" color="secondary">
+              Bem-vindo ao Aurora, seu gerenciador de tarefas inteligente.
+            </Typography>
+          </Header>
+          <Loading size="large" />
+        </Content>
+      </Container>
+    )
+  }
+
   return (
     <Container>
       <Content>
@@ -68,22 +107,22 @@ export const HomeScreen = () => {
         </Header>
 
         <Section>
-          <Typography variant="subtitle1">Resumo de Hoje</Typography>
+          <Typography variant="subtitle1">Resumo das Tarefas</Typography>
           <StatsContainer>
             <StatCard>
               <StatNumber>
-                <Typography variant="h1">0</Typography>
+                <Typography variant="h1">{todos.length}</Typography>
               </StatNumber>
               <StatLabel>
                 <Typography variant="caption" color="secondary">
-                  Total de{'\n'}Tarefas
+                  Total
                 </Typography>
               </StatLabel>
             </StatCard>
             <StatCard>
               <StatNumber>
                 <Typography variant="h1" color="success">
-                  0
+                  {completedTodos.length}
                 </Typography>
               </StatNumber>
               <StatLabel>
@@ -95,7 +134,7 @@ export const HomeScreen = () => {
             <StatCard>
               <StatNumber>
                 <Typography variant="h1" color="warning">
-                  0
+                  {pendingTodos.length}
                 </Typography>
               </StatNumber>
               <StatLabel>
@@ -109,12 +148,32 @@ export const HomeScreen = () => {
 
         <Section>
           <Typography variant="subtitle1">Tarefas Recentes</Typography>
-          <TaskCard>
-            <Typography variant="body1">Nenhuma tarefa encontrada</Typography>
-            <Typography variant="caption" color="secondary">
-              Adicione sua primeira tarefa usando o botão + abaixo
-            </Typography>
-          </TaskCard>
+          {todos.length === 0 ? (
+            <TaskCard>
+              <Typography variant="body1">Nenhuma tarefa encontrada</Typography>
+              <Typography variant="caption" color="secondary">
+                Adicione sua primeira tarefa usando o botão + abaixo
+              </Typography>
+            </TaskCard>
+          ) : (
+            <TaskList>
+              {todos.slice(0, 5).map(todo => (
+                <TaskItem key={todo.id}>
+                  <Typography
+                    variant="body1"
+                    color={todo.completed ? 'success' : 'primary'}
+                  >
+                    {todo.title}
+                  </Typography>
+                  {todo.description && (
+                    <Typography variant="caption" color="secondary">
+                      {todo.description}
+                    </Typography>
+                  )}
+                </TaskItem>
+              ))}
+            </TaskList>
+          )}
         </Section>
       </Content>
     </Container>
