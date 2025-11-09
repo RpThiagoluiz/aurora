@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import styled from 'styled-components/native'
+import { FlatList, ListRenderItem } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NavigationProp } from '@react-navigation/native'
-import {
-  Typography,
-  Loading,
-  useTodos,
-  PriorityBadge,
-  StatusBadge,
-} from '../../../shared'
+import { Typography, Loading, useTodos } from '../../../shared'
+import { TaskCard as TaskCardComponent } from '../components'
+import { Todo } from '../../../services/database/DatabaseService'
 import { RootStackParamList } from '../../../navigation/StackNavigator'
 
 const Container = styled.View`
@@ -16,9 +13,7 @@ const Container = styled.View`
   background-color: ${props => (props.theme as any).colors.BACKGROUND_PRIMARY};
 `
 
-const Content = styled.ScrollView.attrs({
-  showsVerticalScrollIndicator: false,
-})`
+const Content = styled.View`
   flex: 1;
   padding: 20px;
 `
@@ -31,15 +26,6 @@ const Header = styled.View`
 const Section = styled.View`
   margin-bottom: 24px;
   gap: 12px;
-`
-
-const TaskCard = styled.View`
-  background-color: ${props =>
-    (props.theme as any).colors.BACKGROUND_SECONDARY};
-  padding: 16px;
-  border-radius: 12px;
-  align-items: center;
-  gap: 4px;
 `
 
 const StatsContainer = styled.View`
@@ -65,33 +51,16 @@ const StatLabel = styled.View`
   text-align: center;
 `
 
-const TaskList = styled.View`
-  gap: 12px;
-  padding-bottom: 40px;
-`
-
-const TaskItem = styled.TouchableOpacity`
+const EmptyTaskCard = styled.View`
   background-color: ${props =>
     (props.theme as any).colors.BACKGROUND_SECONDARY};
   padding: 16px;
   border-radius: 12px;
-  gap: 8px;
-`
-
-const TaskHeader = styled.View`
-  flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 `
 
-const TaskTitle = styled.View`
-  flex: 1;
-`
-
-const BadgeColumn = styled.View`
-  gap: 12px;
-  align-items: flex-end;
-`
+const flatListContentContainerStyle = { flexGrow: 1 }
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -104,31 +73,34 @@ export const HomeScreen = () => {
     get()
   }, [get])
 
-  const handleTodoPress = (todoId: string) => {
-    navigation.navigate('TodoDetail', { todoId })
-  }
+  const handleTodoPress = useCallback(
+    (todoId: string) => {
+      navigation.navigate('TodoDetail', { todoId })
+    },
+    [navigation],
+  )
 
   console.log('Rendering HomeScreen with todos:', todos)
 
-  if (isLoading) {
-    return (
-      <Container>
-        <Content>
-          <Header>
-            <Typography variant="h2">Olá! 👋</Typography>
-            <Typography variant="body1" color="secondary">
-              Bem-vindo ao Aurora, seu gerenciador de tarefas inteligente.
-            </Typography>
-          </Header>
-          <Loading size="large" />
-        </Content>
-      </Container>
-    )
-  }
+  const renderTaskItem: ListRenderItem<Todo> = useCallback(
+    ({ item }) => <TaskCardComponent todo={item} onPress={handleTodoPress} />,
+    [handleTodoPress],
+  )
 
-  return (
-    <Container>
-      <Content>
+  const keyExtractor = useCallback((item: Todo) => item.id, [])
+
+  const getItemLayout = useCallback(
+    (_: ArrayLike<Todo> | null | undefined, index: number) => ({
+      length: 88,
+      offset: 88 * index,
+      index,
+    }),
+    [],
+  )
+
+  const ListHeader = useCallback(
+    () => (
+      <>
         <Header>
           <Typography variant="h2">Olá! 👋</Typography>
           <Typography variant="body1" color="secondary">
@@ -178,44 +150,48 @@ export const HomeScreen = () => {
 
         <Section>
           <Typography variant="subtitle1">Tarefas Recentes</Typography>
-          {todos.length === 0 ? (
-            <TaskCard>
+        </Section>
+      </>
+    ),
+    [todos.length, completedTodos.length, pendingTodos.length],
+  )
+
+  if (isLoading) {
+    return (
+      <Container>
+        <Content>
+          <Header>
+            <Typography variant="h2">Olá! 👋</Typography>
+            <Typography variant="body1" color="secondary">
+              Bem-vindo ao Aurora, seu gerenciador de tarefas inteligente.
+            </Typography>
+          </Header>
+          <Loading size="large" />
+        </Content>
+      </Container>
+    )
+  }
+
+  return (
+    <Container>
+      <Content>
+        <FlatList
+          data={todos.slice(0, 5)}
+          keyExtractor={keyExtractor}
+          renderItem={renderTaskItem}
+          getItemLayout={getItemLayout}
+          ListHeaderComponent={ListHeader}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={flatListContentContainerStyle}
+          ListEmptyComponent={
+            <EmptyTaskCard>
               <Typography variant="body1">Nenhuma tarefa encontrada</Typography>
               <Typography variant="caption" color="secondary">
                 Adicione sua primeira tarefa usando o botão + abaixo
               </Typography>
-            </TaskCard>
-          ) : (
-            <TaskList>
-              {todos.slice(0, 5).map(todo => (
-                <TaskItem
-                  key={todo.id}
-                  onPress={() => handleTodoPress(todo.id)}
-                >
-                  <TaskHeader>
-                    <TaskTitle>
-                      <Typography
-                        variant="body1"
-                        color={todo.completed ? 'success' : 'primary'}
-                      >
-                        {todo.title}
-                      </Typography>
-                    </TaskTitle>
-                    <BadgeColumn>
-                      <PriorityBadge priority={todo.priority} />
-                      <StatusBadge completed={todo.completed} />
-                    </BadgeColumn>
-                  </TaskHeader>
-                  {todo.description && (
-                    <Typography variant="caption" color="secondary">
-                      {todo.description}
-                    </Typography>
-                  )}
-                </TaskItem>
-              ))}
-            </TaskList>
-          )}
-        </Section>
+            </EmptyTaskCard>
+          }
+        />
       </Content>
     </Container>
   )
