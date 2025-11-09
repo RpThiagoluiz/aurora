@@ -7,6 +7,7 @@ import styled from 'styled-components/native'
 import { Button, Typography } from '../../../shared/components'
 import { useTodos } from '../../../shared/context'
 import { TaskFormData, taskFormSchema } from '../../../shared/types'
+import { getPriorityColor } from '../../../shared/utils'
 
 // Styled Components
 const Container = styled.View`
@@ -165,19 +166,6 @@ export const AddTodoScreen = () => {
       Alert.alert('Erro', 'Erro inesperado ao salvar a tarefa.')
     } finally {
       setIsSaving(false)
-    }
-  }
-
-  const getPriorityColor = (selectedPriority: string) => {
-    switch (selectedPriority) {
-      case 'high':
-        return '#FF453A' // STATUS_DELETE
-      case 'medium':
-        return '#0A84FF' // ACCENT_PRIMARY
-      case 'low':
-        return '#6FCF97' // STATUS_COMPLETE
-      default:
-        return '#A0A0A0' // TEXT_SECONDARY
     }
   }
 
