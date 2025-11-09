@@ -5,39 +5,33 @@
  * @format
  */
 
-import { StatusBar, StyleSheet, View } from 'react-native'
+import { StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
+import { AppNavigator } from './src/navigation'
+import { ThemeProvider } from './src/shared'
 import { useTheme } from './src/hooks'
-import { ExampleComponent, ThemeProvider } from './src/shared'
+
+function AppContent() {
+  const { colors, themeType } = useTheme()
+
+  return (
+    <SafeAreaProvider>
+      <StatusBar
+        barStyle={themeType === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={colors.BACKGROUND_PRIMARY}
+      />
+      <AppNavigator />
+    </SafeAreaProvider>
+  )
+}
 
 function App() {
   return (
     <ThemeProvider>
-      <SafeAreaProvider>
-        <StatusBar barStyle="light-content" />
-        <AppContent />
-      </SafeAreaProvider>
+      <AppContent />
     </ThemeProvider>
   )
 }
-
-function AppContent() {
-  const { colors } = useTheme()
-
-  return (
-    <View
-      style={[styles.container, { backgroundColor: colors.BACKGROUND_PRIMARY }]}
-    >
-      <ExampleComponent />
-    </View>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
 
 export default App

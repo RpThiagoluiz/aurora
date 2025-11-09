@@ -2,7 +2,16 @@
 
 ## 📱 Sobre o Projeto
 
-Todo app. O projeto implementa um gerenciador de tarefas com funcionalidades completas e arquitetura escalável.
+Aurora é um gerenciador de tarefas moderno desenvolvido em React Native, criado como projeto de teste para posição sênior. Implementa arquitetura escalável, boas práticas de desenvolvimento e componentes reutilizáveis.
+
+## 🎯 Funcionalidades
+
+- ✅ **Gerenciamento de Tarefas**: Criar, editar e organizar tarefas
+- 🎨 **Sistema de Tema**: Tema escuro elegante e responsivo
+- 📱 **Navegação Intuitiva**: Tab navigation com React Navigation
+- 🔧 **Componentes Reutilizáveis**: Button e Typography padronizados
+- ✅ **Validação de Formulários**: React Hook Form + Zod
+- 🏗️ **Arquitetura Escalável**: Estrutura modular e tipada
 
 ## 🏗️ Arquitetura
 
@@ -11,21 +20,50 @@ O projeto segue uma arquitetura modular e organizada:
 ```
 src/
 ├── shared/          # Componentes, tipos e utilitários compartilhados
+│   ├── components/  # Button, Typography, etc.
+│   ├── constants/   # Tema, cores, configurações
+│   ├── context/     # Context providers (Theme)
+│   └── types/       # Interfaces TypeScript
 ├── modules/         # Módulos específicos (todo, auth, etc.)
 ├── hooks/           # Custom hooks reutilizáveis
+├── navigation/      # Configuração de navegação
+├── screens/         # Telas principais
 └── services/        # Serviços (database, API)
 ```
 
-## 🛠️ Tecnologias Utilizadas
+## � Documentação
+
+- **[📦 Componentes](./COMPONENTS.md)** - Button e Typography components
+- **[🧭 Navegação](./NAVIGATION.md)** - Sistema de navegação e estrutura
+- **[🎨 Tema](./THEME.md)** - Sistema de cores e tema escuro
+
+## �🛠️ Tecnologias Utilizadas
 
 - **React Native** 0.82.1
-- **TypeScript** - Tipagem estática
-- **AsyncStorage** - Persistência local
+- **TypeScript** - Tipagem estática completa
+- **React Navigation v6** - Navegação por tabs
+- **React Hook Form** - Gerenciamento de formulários
+- **Zod** - Validação de schemas
 - **ESLint** - Linting rigoroso para código sênior
 - **Prettier** - Formatação consistente
 - **Husky** - Git hooks para validações
 - **CommitLint** - Padronização de commits convencionais
 - **GitHub Actions** - CI/CD pipeline
+
+## 🎨 Design System
+
+### Componentes Principais
+
+- **Button**: Variantes primary/secondary com loading states
+- **Typography**: Sistema completo de tipografia (h1-h3, body, caption)
+- **Theme Provider**: Gerenciamento centralizado de cores
+
+### Paleta de Cores (Dark Theme)
+
+- **Primary**: `#0A84FF` - Azul principal
+- **Background**: `#000000` / `#1E1E1E` - Fundos escuros
+- **Text**: `#E0E0E0` / `#A0A0A0` - Textos claros
+- **Status**: Verde/Vermelho para sucesso/erro
 
 ## 🚀 Configuração de Desenvolvimento
 
