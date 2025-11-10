@@ -1,9 +1,12 @@
-import { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useState, useMemo } from 'react'
 import styled from 'styled-components/native'
 import { FlatList, ListRenderItem } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NavigationProp } from '@react-navigation/native'
 import { Typography, Loading, useTodos } from '../../../shared'
+import { useTheme } from '../../../hooks'
+import { TodoFilter } from '../../../shared/types'
+import { getFilterColors } from '../../../shared/utils'
 import { TaskCard as TaskCardComponent } from '../components'
 import { Todo } from '../../../services/database/DatabaseService'
 import { RootStackParamList } from '../../../navigation/StackNavigator'
@@ -33,7 +36,10 @@ const StatsContainer = styled.View`
   justify-content: space-between;
 `
 
-const StatCard = styled.View`
+const StatCard = styled.TouchableOpacity<{
+  isActive?: boolean
+  activeColor?: string
+}>`
   flex: 1;
   background-color: ${props =>
     (props.theme as any).colors.BACKGROUND_SECONDARY};
@@ -41,6 +47,9 @@ const StatCard = styled.View`
   border-radius: 12px;
   margin: 0 4px;
   align-items: center;
+  border-bottom-width: ${props => (props.isActive ? '3px' : '0px')};
+  border-bottom-color: ${props =>
+    props.isActive ? props.activeColor : 'transparent'};
 `
 
 const StatNumber = styled.View`
@@ -65,9 +74,27 @@ const flatListContentContainerStyle = { flexGrow: 1 }
 export const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { todos, isLoading, get } = useTodos()
+  const theme = useTheme()
 
   const completedTodos = todos.filter(todo => todo.completed)
   const pendingTodos = todos.filter(todo => !todo.completed)
+
+  const [activeFilter, setActiveFilter] = useState<TodoFilter>('all')
+
+  const filteredTodos = useMemo(() => {
+    switch (activeFilter) {
+      case 'completed':
+        return completedTodos
+      case 'pending':
+        return pendingTodos
+      default:
+        return todos
+    }
+  }, [todos, completedTodos, pendingTodos, activeFilter])
+
+  const handleFilterPress = useCallback((filter: TodoFilter) => {
+    setActiveFilter(filter)
+  }, [])
 
   useEffect(() => {
     get()
@@ -79,8 +106,6 @@ export const HomeScreen = () => {
     },
     [navigation],
   )
-
-  console.log('Rendering HomeScreen with todos:', todos)
 
   const renderTaskItem: ListRenderItem<Todo> = useCallback(
     ({ item }) => <TaskCardComponent todo={item} onPress={handleTodoPress} />,
@@ -111,17 +136,27 @@ export const HomeScreen = () => {
         <Section>
           <Typography variant="subtitle1">Resumo das Tarefas</Typography>
           <StatsContainer>
-            <StatCard>
+            <StatCard
+              isActive={activeFilter === 'all'}
+              activeColor={getFilterColors('all', theme).activeColor}
+              onPress={() => handleFilterPress('all')}
+            >
               <StatNumber>
-                <Typography variant="h1">{todos.length}</Typography>
+                <Typography variant="h1" color="accent">
+                  {todos.length}
+                </Typography>
               </StatNumber>
               <StatLabel>
                 <Typography variant="caption" color="secondary">
-                  Total
+                  Total de {'\n'} tarefas
                 </Typography>
               </StatLabel>
             </StatCard>
-            <StatCard>
+            <StatCard
+              isActive={activeFilter === 'completed'}
+              activeColor={getFilterColors('completed', theme).activeColor}
+              onPress={() => handleFilterPress('completed')}
+            >
               <StatNumber>
                 <Typography variant="h1" color="success">
                   {completedTodos.length}
@@ -133,7 +168,11 @@ export const HomeScreen = () => {
                 </Typography>
               </StatLabel>
             </StatCard>
-            <StatCard>
+            <StatCard
+              isActive={activeFilter === 'pending'}
+              activeColor={getFilterColors('pending', theme).activeColor}
+              onPress={() => handleFilterPress('pending')}
+            >
               <StatNumber>
                 <Typography variant="h1" color="warning">
                   {pendingTodos.length}
@@ -153,7 +192,14 @@ export const HomeScreen = () => {
         </Section>
       </>
     ),
-    [todos.length, completedTodos.length, pendingTodos.length],
+    [
+      todos.length,
+      completedTodos.length,
+      pendingTodos.length,
+      activeFilter,
+      handleFilterPress,
+      theme,
+    ],
   )
 
   if (isLoading) {
@@ -176,7 +222,7 @@ export const HomeScreen = () => {
     <Container>
       <Content>
         <FlatList
-          data={todos.slice(0, 5)}
+          data={filteredTodos.slice(0, 5)}
           keyExtractor={keyExtractor}
           renderItem={renderTaskItem}
           getItemLayout={getItemLayout}
