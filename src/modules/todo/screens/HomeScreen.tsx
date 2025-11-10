@@ -1,6 +1,6 @@
-import React, { useEffect, useCallback, useState, useMemo } from 'react'
+import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
 import styled from 'styled-components/native'
-import { FlatList, ListRenderItem } from 'react-native'
+import { FlatList, ListRenderItem, Animated } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from '@react-navigation/native'
 import { NavigationProp } from '@react-navigation/native'
@@ -119,12 +119,25 @@ const SearchFilterChip = styled.View`
   margin-right: 8px;
 `
 
+const AnimatedGreeting = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`
+
+const WaveEmoji = styled(Animated.Text)`
+  font-size: 28px;
+`
+
 const flatListContentContainerStyle = { flexGrow: 1 }
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { todos, isLoading, get } = useTodos()
   const theme = useTheme()
+
+  // Animação para o emoji de aceno
+  const waveAnimation = useRef(new Animated.Value(0)).current
 
   const completedTodos = todos.filter(todo => todo.completed)
   const pendingTodos = todos.filter(todo => !todo.completed)
@@ -202,6 +215,41 @@ export const HomeScreen = () => {
     get()
   }, [get])
 
+  useEffect(() => {
+    const startWaveAnimation = () => {
+      Animated.sequence([
+        Animated.timing(waveAnimation, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(waveAnimation, {
+          toValue: -0.8,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(waveAnimation, {
+          toValue: 0.8,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(waveAnimation, {
+          toValue: -0.5,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(waveAnimation, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start()
+    }
+
+    const timer = setTimeout(startWaveAnimation, 500)
+    return () => clearTimeout(timer)
+  }, [waveAnimation])
+
   const handleTodoPress = useCallback(
     (todoId: string) => {
       navigation.navigate('TodoDetail', { todoId })
@@ -229,7 +277,29 @@ export const HomeScreen = () => {
     () => (
       <>
         <Header>
-          <Typography variant="h2">Olá! 👋</Typography>
+          <AnimatedGreeting>
+            <Typography variant="h2">Olá! </Typography>
+            <WaveEmoji
+              style={{
+                transform: [
+                  {
+                    rotate: waveAnimation.interpolate({
+                      inputRange: [-1, -0.5, 0, 0.5, 1],
+                      outputRange: [
+                        '-20deg',
+                        '-10deg',
+                        '0deg',
+                        '10deg',
+                        '20deg',
+                      ],
+                    }),
+                  },
+                ],
+              }}
+            >
+              👋
+            </WaveEmoji>
+          </AnimatedGreeting>
           <Typography variant="body1" color="secondary">
             Bem-vindo ao Aurora, seu gerenciador de tarefas inteligente.
           </Typography>
@@ -343,6 +413,7 @@ export const HomeScreen = () => {
       handleOpenFilterDrawer,
       handleClearAdvancedFilters,
       hasActiveFilters,
+      waveAnimation,
     ],
   )
 
