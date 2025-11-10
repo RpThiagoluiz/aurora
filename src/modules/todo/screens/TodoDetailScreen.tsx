@@ -15,6 +15,7 @@ import {
   StatusBadge,
 } from '../../../shared/components'
 import { useTodos } from '../../../shared/context'
+import { useTheme } from '../../../hooks'
 import { TaskFormData, taskFormSchema } from '../../../shared/types'
 import {
   getPriorityColor,
@@ -145,6 +146,7 @@ export const TodoDetailScreen: React.FC<TodoDetailScreenProps> = ({
 }) => {
   const { todoId } = route.params
   const { todos, edit, remove, toggle } = useTodos()
+  const theme = useTheme()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -285,6 +287,10 @@ export const TodoDetailScreen: React.FC<TodoDetailScreenProps> = ({
   return (
     <Container>
       <HeaderContainer>
+        <BadgeGroup>
+          <PriorityBadge priority={todo.priority} />
+          <StatusBadge completed={todo.completed} />
+        </BadgeGroup>
         <HeaderActions>
           <IconButton
             onPress={handleDelete}
@@ -293,7 +299,11 @@ export const TodoDetailScreen: React.FC<TodoDetailScreenProps> = ({
             <Icon
               name="trash-outline"
               size={24}
-              color={todo.completed ? '#A0A0A0' : '#FF453A'}
+              color={
+                todo.completed
+                  ? theme.colors.TEXT_SECONDARY
+                  : theme.colors.STATUS_DELETE
+              }
             />
           </IconButton>
           <IconButton
@@ -303,15 +313,14 @@ export const TodoDetailScreen: React.FC<TodoDetailScreenProps> = ({
             <Icon
               name="save-outline"
               size={24}
-              color={!hasChanges || isSaving ? '#A0A0A0' : '#0A84FF'}
+              color={
+                !hasChanges || isSaving
+                  ? theme.colors.TEXT_SECONDARY
+                  : theme.colors.ACCENT_PRIMARY
+              }
             />
           </IconButton>
         </HeaderActions>
-
-        <BadgeGroup>
-          <PriorityBadge priority={todo.priority} />
-          <StatusBadge completed={todo.completed} />
-        </BadgeGroup>
       </HeaderContainer>
 
       <Content>
