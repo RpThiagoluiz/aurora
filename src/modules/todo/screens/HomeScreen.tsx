@@ -1,13 +1,16 @@
 import React, { useEffect, useCallback, useState, useMemo } from 'react'
 import styled from 'styled-components/native'
 import { FlatList, ListRenderItem } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from '@react-navigation/native'
 import { NavigationProp } from '@react-navigation/native'
 import { Typography, Loading, useTodos } from '../../../shared'
 import { useTheme } from '../../../hooks'
-import { TodoFilter } from '../../../shared/types'
+import { TodoFilter, AdvancedFilters } from '../../../shared/types'
 import { getFilterColors } from '../../../shared/utils'
-import { TaskCard as TaskCardComponent } from '../components'
+import { TaskCard } from '../components'
+import { FilterDrawer } from '../components'
+import { PriorityBadge } from '../../../shared/components'
 import { Todo } from '../../../services/database/DatabaseService'
 import { RootStackParamList } from '../../../navigation/StackNavigator'
 
@@ -69,6 +72,53 @@ const EmptyTaskCard = styled.View`
   gap: 4px;
 `
 
+const FilterSection = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+`
+
+const FilterContent = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`
+
+const FilterActions = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+`
+
+const FilterButton = styled.TouchableOpacity`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: ${props =>
+    (props.theme as any).colors.BACKGROUND_SECONDARY};
+  align-items: center;
+  justify-content: center;
+`
+
+const ClearFilterButton = styled.TouchableOpacity`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: ${props => (props.theme as any).colors.STATUS_DELETE};
+  align-items: center;
+  justify-content: center;
+`
+
+const SearchFilterChip = styled.View`
+  background-color: ${props =>
+    (props.theme as any).colors.BACKGROUND_SECONDARY};
+  border-radius: 16px;
+  padding: 6px 12px;
+  margin-right: 8px;
+`
+
 const flatListContentContainerStyle = { flexGrow: 1 }
 
 export const HomeScreen = () => {
@@ -80,21 +130,73 @@ export const HomeScreen = () => {
   const pendingTodos = todos.filter(todo => !todo.completed)
 
   const [activeFilter, setActiveFilter] = useState<TodoFilter>('all')
+  const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false)
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({
+    priorities: [],
+    titleSearch: '',
+  })
 
   const filteredTodos = useMemo(() => {
+    let result = todos
+
     switch (activeFilter) {
       case 'completed':
-        return completedTodos
+        result = completedTodos
+        break
       case 'pending':
-        return pendingTodos
+        result = pendingTodos
+        break
       default:
-        return todos
+        result = todos
     }
-  }, [todos, completedTodos, pendingTodos, activeFilter])
+
+    if (advancedFilters.priorities.length > 0) {
+      result = result.filter(todo =>
+        advancedFilters.priorities.includes(todo.priority),
+      )
+    }
+
+    if (advancedFilters.titleSearch.trim()) {
+      const searchTerm = advancedFilters.titleSearch.toLowerCase().trim()
+      result = result.filter(todo =>
+        todo.title.toLowerCase().includes(searchTerm),
+      )
+    }
+
+    return result
+  }, [todos, completedTodos, pendingTodos, activeFilter, advancedFilters])
 
   const handleFilterPress = useCallback((filter: TodoFilter) => {
     setActiveFilter(filter)
   }, [])
+
+  const handleOpenFilterDrawer = useCallback(() => {
+    setIsFilterDrawerVisible(true)
+  }, [])
+
+  const handleCloseFilterDrawer = useCallback(() => {
+    setIsFilterDrawerVisible(false)
+  }, [])
+
+  const handleClearAdvancedFilters = useCallback(() => {
+    setAdvancedFilters({
+      priorities: [],
+      titleSearch: '',
+    })
+    setActiveFilter('all')
+  }, [])
+
+  const hasActiveFilters = useCallback(() => {
+    return (
+      activeFilter !== 'all' ||
+      advancedFilters.priorities.length > 0 ||
+      advancedFilters.titleSearch.trim() !== ''
+    )
+  }, [
+    activeFilter,
+    advancedFilters.priorities.length,
+    advancedFilters.titleSearch,
+  ])
 
   useEffect(() => {
     get()
@@ -108,7 +210,7 @@ export const HomeScreen = () => {
   )
 
   const renderTaskItem: ListRenderItem<Todo> = useCallback(
-    ({ item }) => <TaskCardComponent todo={item} onPress={handleTodoPress} />,
+    ({ item }) => <TaskCard todo={item} onPress={handleTodoPress} />,
     [handleTodoPress],
   )
 
@@ -187,6 +289,44 @@ export const HomeScreen = () => {
           </StatsContainer>
         </Section>
 
+        <FilterSection>
+          <FilterContent>
+            {advancedFilters.titleSearch.trim() && (
+              <SearchFilterChip>
+                <Typography variant="caption" color="secondary">
+                  Busca: "{advancedFilters.titleSearch}"
+                </Typography>
+              </SearchFilterChip>
+            )}
+            {advancedFilters.priorities.map(priority => (
+              <PriorityBadge key={priority} priority={priority} />
+            ))}
+          </FilterContent>
+
+          <FilterActions>
+            <FilterButton onPress={handleOpenFilterDrawer}>
+              <Icon
+                name="funnel-outline"
+                size={20}
+                color={
+                  hasActiveFilters()
+                    ? theme.colors.ACCENT_PRIMARY
+                    : theme.colors.TEXT_PRIMARY
+                }
+              />
+            </FilterButton>
+            {hasActiveFilters() && (
+              <ClearFilterButton onPress={handleClearAdvancedFilters}>
+                <Icon
+                  name="close-outline"
+                  size={20}
+                  color={theme.colors.BACKGROUND_PRIMARY}
+                />
+              </ClearFilterButton>
+            )}
+          </FilterActions>
+        </FilterSection>
+
         <Section>
           <Typography variant="subtitle1">Tarefas Recentes</Typography>
         </Section>
@@ -199,6 +339,10 @@ export const HomeScreen = () => {
       activeFilter,
       handleFilterPress,
       theme,
+      advancedFilters,
+      handleOpenFilterDrawer,
+      handleClearAdvancedFilters,
+      hasActiveFilters,
     ],
   )
 
@@ -239,6 +383,14 @@ export const HomeScreen = () => {
           }
         />
       </Content>
+
+      <FilterDrawer
+        isVisible={isFilterDrawerVisible}
+        onClose={handleCloseFilterDrawer}
+        filters={advancedFilters}
+        onFiltersChange={setAdvancedFilters}
+        onClearFilters={handleClearAdvancedFilters}
+      />
     </Container>
   )
 }
