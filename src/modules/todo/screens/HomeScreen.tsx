@@ -38,10 +38,7 @@ const StatsContainer = styled.View`
   justify-content: space-between;
 `
 
-const StatCard = styled.TouchableOpacity<{
-  isActive?: boolean
-  activeColor?: string
-}>`
+const StatCardBase = styled.TouchableOpacity`
   flex: 1;
   background-color: ${props =>
     (props.theme as any).colors.BACKGROUND_SECONDARY};
@@ -49,9 +46,19 @@ const StatCard = styled.TouchableOpacity<{
   border-radius: 12px;
   margin: 0 4px;
   align-items: center;
-  border-bottom-width: ${props => (props.isActive ? '3px' : '0px')};
-  border-bottom-color: ${props =>
-    props.isActive ? props.activeColor : 'transparent'};
+  position: relative;
+  overflow: hidden;
+`
+
+const AnimatedBorder = styled(Animated.View)<{
+  activeColor?: string
+}>`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: ${props => props.activeColor || 'transparent'};
+  border-radius: 0 0 12px 12px;
 `
 
 const StatNumber = styled.View`
@@ -70,6 +77,97 @@ const EmptyTaskCard = styled.View`
   align-items: center;
   gap: 4px;
 `
+
+// Componente StatCard funcional com animação
+interface StatCardProps {
+  isActive?: boolean
+  activeColor?: string
+  onPress: () => void
+  children: React.ReactNode
+}
+
+const StatCard: React.FC<StatCardProps> = ({
+  isActive = false,
+  activeColor = '#000',
+  onPress,
+  children,
+}) => {
+  const borderHeight = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    Animated.spring(borderHeight, {
+      toValue: isActive ? 3 : 0,
+      useNativeDriver: false,
+      tension: 100,
+      friction: 8,
+    }).start()
+  }, [isActive, borderHeight])
+
+  return (
+    <StatCardBase onPress={onPress}>
+      {children}
+      <AnimatedBorder
+        activeColor={activeColor}
+        style={{
+          height: borderHeight,
+        }}
+      />
+    </StatCardBase>
+  )
+}
+
+// Componente AnimatedTaskItem com fade-in
+interface AnimatedTaskItemProps {
+  todo: Todo
+  onPress: (todoId: string) => void
+  index: number
+  animationKey: number
+}
+
+const AnimatedTaskItem: React.FC<AnimatedTaskItemProps> = ({
+  todo,
+  onPress,
+  index,
+  animationKey,
+}) => {
+  const opacity = useRef(new Animated.Value(0)).current
+  const translateY = useRef(new Animated.Value(20)).current
+
+  useEffect(() => {
+    // Reset animation values
+    opacity.setValue(0)
+    translateY.setValue(20)
+
+    const delay = index * 50 // Staggered animation mais rápida
+
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 400,
+        delay,
+        useNativeDriver: true,
+      }),
+      Animated.spring(translateY, {
+        toValue: 0,
+        delay,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 8,
+      }),
+    ]).start()
+  }, [opacity, translateY, index, animationKey])
+
+  return (
+    <Animated.View
+      style={{
+        opacity,
+        transform: [{ translateY }],
+      }}
+    >
+      <TaskCard todo={todo} onPress={onPress} />
+    </Animated.View>
+  )
+}
 
 const FilterSection = styled.View`
   flex-direction: row;
@@ -147,6 +245,12 @@ export const HomeScreen = () => {
   } = useFilter()
 
   const waveAnimation = useRef(new Animated.Value(0)).current
+  const animationKey = useRef(0)
+
+  // Reset animation quando filteredTodos mudar
+  useEffect(() => {
+    animationKey.current += 1
+  }, [filteredTodos])
 
   const handleFilterPress = useCallback(
     (filter: 'all' | 'completed' | 'pending') => {
@@ -206,7 +310,14 @@ export const HomeScreen = () => {
   )
 
   const renderTaskItem: ListRenderItem<Todo> = useCallback(
-    ({ item }) => <TaskCard todo={item} onPress={handleTodoPress} />,
+    ({ item, index }) => (
+      <AnimatedTaskItem
+        todo={item}
+        onPress={handleTodoPress}
+        index={index || 0}
+        animationKey={animationKey.current}
+      />
+    ),
     [handleTodoPress],
   )
 
