@@ -9,7 +9,6 @@ import { useTodos } from '../../../shared/context'
 import { TaskFormData, taskFormSchema } from '../../../shared/types'
 import { getPriorityColor } from '../../../shared/utils'
 
-// Styled Components
 const Container = styled.View`
   flex: 1;
   background-color: ${props => (props.theme as any).colors.BACKGROUND_PRIMARY};

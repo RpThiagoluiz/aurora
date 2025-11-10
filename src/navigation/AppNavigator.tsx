@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import React from 'react'
 
 import { useTheme } from '../hooks'
+import { FilterProvider } from '../shared/context'
 import { StackNavigator } from './StackNavigator'
 
 export const AppNavigator = () => {
@@ -39,7 +40,9 @@ export const AppNavigator = () => {
 
   return (
     <NavigationContainer theme={navigationTheme}>
-      <StackNavigator />
+      <FilterProvider>
+        <StackNavigator />
+      </FilterProvider>
     </NavigationContainer>
   )
 }

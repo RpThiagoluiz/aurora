@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useCallback, useRef } from 'react'
 import styled from 'styled-components/native'
 import { FlatList, ListRenderItem, Animated } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -6,11 +6,10 @@ import { useNavigation } from '@react-navigation/native'
 import { NavigationProp } from '@react-navigation/native'
 import { Typography, Loading, useTodos } from '../../../shared'
 import { useTheme } from '../../../hooks'
-import { TodoFilter, AdvancedFilters } from '../../../shared/types'
 import { getFilterColors } from '../../../shared/utils'
 import { TaskCard } from '../components'
-import { FilterDrawer } from '../components'
 import { PriorityBadge } from '../../../shared/components'
+import { useFilter } from '../../../shared/context'
 import { Todo } from '../../../services/database/DatabaseService'
 import { RootStackParamList } from '../../../navigation/StackNavigator'
 
@@ -133,83 +132,32 @@ const flatListContentContainerStyle = { flexGrow: 1 }
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const { todos, isLoading, get } = useTodos()
+  const { isLoading, get } = useTodos()
   const theme = useTheme()
+  const {
+    activeFilter,
+    advancedFilters,
+    filteredTodos,
+    totalTodos,
+    completedTodos,
+    pendingTodos,
+    setActiveFilter,
+    clearAllFilters,
+    hasActiveFilters,
+  } = useFilter()
 
-  // Animação para o emoji de aceno
   const waveAnimation = useRef(new Animated.Value(0)).current
 
-  const completedTodos = todos.filter(todo => todo.completed)
-  const pendingTodos = todos.filter(todo => !todo.completed)
-
-  const [activeFilter, setActiveFilter] = useState<TodoFilter>('all')
-  const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false)
-  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilters>({
-    priorities: [],
-    titleSearch: '',
-  })
-
-  const filteredTodos = useMemo(() => {
-    let result = todos
-
-    switch (activeFilter) {
-      case 'completed':
-        result = completedTodos
-        break
-      case 'pending':
-        result = pendingTodos
-        break
-      default:
-        result = todos
-    }
-
-    if (advancedFilters.priorities.length > 0) {
-      result = result.filter(todo =>
-        advancedFilters.priorities.includes(todo.priority),
-      )
-    }
-
-    if (advancedFilters.titleSearch.trim()) {
-      const searchTerm = advancedFilters.titleSearch.toLowerCase().trim()
-      result = result.filter(todo =>
-        todo.title.toLowerCase().includes(searchTerm),
-      )
-    }
-
-    return result
-  }, [todos, completedTodos, pendingTodos, activeFilter, advancedFilters])
-
-  const handleFilterPress = useCallback((filter: TodoFilter) => {
-    setActiveFilter(filter)
-  }, [])
+  const handleFilterPress = useCallback(
+    (filter: 'all' | 'completed' | 'pending') => {
+      setActiveFilter(filter)
+    },
+    [setActiveFilter],
+  )
 
   const handleOpenFilterDrawer = useCallback(() => {
-    setIsFilterDrawerVisible(true)
-  }, [])
-
-  const handleCloseFilterDrawer = useCallback(() => {
-    setIsFilterDrawerVisible(false)
-  }, [])
-
-  const handleClearAdvancedFilters = useCallback(() => {
-    setAdvancedFilters({
-      priorities: [],
-      titleSearch: '',
-    })
-    setActiveFilter('all')
-  }, [])
-
-  const hasActiveFilters = useCallback(() => {
-    return (
-      activeFilter !== 'all' ||
-      advancedFilters.priorities.length > 0 ||
-      advancedFilters.titleSearch.trim() !== ''
-    )
-  }, [
-    activeFilter,
-    advancedFilters.priorities.length,
-    advancedFilters.titleSearch,
-  ])
+    navigation.navigate('Filter')
+  }, [navigation])
 
   useEffect(() => {
     get()
@@ -315,7 +263,7 @@ export const HomeScreen = () => {
             >
               <StatNumber>
                 <Typography variant="h1" color="accent">
-                  {todos.length}
+                  {totalTodos}
                 </Typography>
               </StatNumber>
               <StatLabel>
@@ -331,7 +279,7 @@ export const HomeScreen = () => {
             >
               <StatNumber>
                 <Typography variant="h1" color="success">
-                  {completedTodos.length}
+                  {completedTodos}
                 </Typography>
               </StatNumber>
               <StatLabel>
@@ -347,7 +295,7 @@ export const HomeScreen = () => {
             >
               <StatNumber>
                 <Typography variant="h1" color="warning">
-                  {pendingTodos.length}
+                  {pendingTodos}
                 </Typography>
               </StatNumber>
               <StatLabel>
@@ -386,7 +334,7 @@ export const HomeScreen = () => {
               />
             </FilterButton>
             {hasActiveFilters() && (
-              <ClearFilterButton onPress={handleClearAdvancedFilters}>
+              <ClearFilterButton onPress={clearAllFilters}>
                 <Icon
                   name="close-outline"
                   size={20}
@@ -403,15 +351,15 @@ export const HomeScreen = () => {
       </>
     ),
     [
-      todos.length,
-      completedTodos.length,
-      pendingTodos.length,
+      totalTodos,
+      completedTodos,
+      pendingTodos,
       activeFilter,
       handleFilterPress,
       theme,
       advancedFilters,
       handleOpenFilterDrawer,
-      handleClearAdvancedFilters,
+      clearAllFilters,
       hasActiveFilters,
       waveAnimation,
     ],
@@ -454,14 +402,6 @@ export const HomeScreen = () => {
           }
         />
       </Content>
-
-      <FilterDrawer
-        isVisible={isFilterDrawerVisible}
-        onClose={handleCloseFilterDrawer}
-        filters={advancedFilters}
-        onFiltersChange={setAdvancedFilters}
-        onClearFilters={handleClearAdvancedFilters}
-      />
     </Container>
   )
 }

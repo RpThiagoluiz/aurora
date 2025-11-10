@@ -16,7 +16,6 @@ export type TabParamList = {
 
 const Tab = createBottomTabNavigator<TabParamList>()
 
-// Helper para criar estilos do tab navigator
 const getTabBarStyles = (colors: Colors) => ({
   tabBarStyle: {
     backgroundColor: colors.BACKGROUND_SECONDARY,
