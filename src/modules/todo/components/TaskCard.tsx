@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import { Typography, PriorityBadge, StatusBadge } from '../../../shared'
+import { formatTaskDateCompact } from '../../../shared/utils'
 import { Todo } from '../../../services/database/DatabaseService'
 
 interface TaskCardProps {
@@ -24,8 +25,9 @@ const TaskHeader = styled.View`
   gap: 8px;
 `
 
-const TaskTitle = styled.View`
+const TaskInfo = styled.View`
   flex: 1;
+  gap: 4px;
 `
 
 const BadgeColumn = styled.View`
@@ -37,14 +39,17 @@ export const TaskCard = React.memo<TaskCardProps>(({ todo, onPress }) => {
   return (
     <TaskItem onPress={() => onPress(todo.id)}>
       <TaskHeader>
-        <TaskTitle>
+        <TaskInfo>
           <Typography
             variant="body1"
             color={todo.completed ? 'success' : 'primary'}
           >
             {todo.title}
           </Typography>
-        </TaskTitle>
+          <Typography variant="caption" color="secondary">
+            Criada em: {formatTaskDateCompact(todo.id)}
+          </Typography>
+        </TaskInfo>
         <BadgeColumn>
           <PriorityBadge priority={todo.priority} />
           <StatusBadge completed={todo.completed} />

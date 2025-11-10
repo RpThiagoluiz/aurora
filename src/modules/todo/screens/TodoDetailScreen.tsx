@@ -16,7 +16,11 @@ import {
 } from '../../../shared/components'
 import { useTodos } from '../../../shared/context'
 import { TaskFormData, taskFormSchema } from '../../../shared/types'
-import { getPriorityColor, getPriorityLabel } from '../../../shared/utils'
+import {
+  getPriorityColor,
+  getPriorityLabel,
+  formatTaskDate,
+} from '../../../shared/utils'
 
 type TodoDetailRouteProp = RouteProp<RootStackParamList, 'TodoDetail'>
 type TodoDetailNavigationProp = NavigationProp<RootStackParamList, 'TodoDetail'>
@@ -169,19 +173,11 @@ export const TodoDetailScreen: React.FC<TodoDetailScreenProps> = ({
         priority: todo.priority,
       })
       setIsLoading(false)
-    } else {
-      Alert.alert(
-        'Tarefa não encontrada',
-        'A tarefa que você está procurando não foi encontrada.',
-        [{ text: 'OK', onPress: () => navigation.goBack() }],
-      )
     }
   }, [todo, reset, navigation])
 
-  // Monitora os valores atuais do formulário
   const watchedValues = watch()
 
-  // Detecta se houve mudanças comparando com os dados originais
   const hasChanges = useMemo(() => {
     if (!todo) return false
 
@@ -222,7 +218,7 @@ export const TodoDetailScreen: React.FC<TodoDetailScreenProps> = ({
 
       if (success) {
         Alert.alert('Sucesso', 'Tarefa atualizada com sucesso!', [
-          { text: 'OK', onPress: () => navigation.goBack() },
+          { text: 'OK', onPress: () => navigation.navigate('Main') },
         ])
       } else {
         Alert.alert('Erro', 'Erro ao atualizar a tarefa. Tente novamente.')
@@ -267,7 +263,7 @@ export const TodoDetailScreen: React.FC<TodoDetailScreenProps> = ({
             const success = await remove(todo.id)
             if (success) {
               Alert.alert('Sucesso', 'Tarefa excluída com sucesso!', [
-                { text: 'OK', onPress: () => navigation.goBack() },
+                { text: 'OK', onPress: () => navigation.navigate('Main') },
               ])
             } else {
               Alert.alert('Erro', 'Erro ao excluir a tarefa.')
@@ -319,6 +315,13 @@ export const TodoDetailScreen: React.FC<TodoDetailScreenProps> = ({
       </HeaderContainer>
 
       <Content>
+        <Section>
+          <Typography variant="subtitle2">Informações</Typography>
+          <Typography variant="caption" color="secondary">
+            Criada em: {formatTaskDate(todo.id)}
+          </Typography>
+        </Section>
+
         <Section>
           <Typography variant="subtitle2">Título *</Typography>
           <Controller
