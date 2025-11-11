@@ -10,6 +10,32 @@ jest.mock('react-native/Libraries/Utilities/useColorScheme', () => ({
 }))
 
 // Mock AsyncStorage
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
+)
+
+// Mock react-navigation
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: jest.fn(),
+    goBack: jest.fn(),
+  }),
+  useRoute: () => ({
+    params: {},
+  }),
+  useFocusEffect: jest.fn(),
+}))
+
+// Mock styled-components theme
+jest.mock('styled-components/native', () => ({
+  __esModule: true,
+  default: jest.fn(() => ({
+    render: jest.fn(),
+  })),
+  ThemeProvider: ({ children }) => children,
+}))
+
+// Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
   default: {
     getItem: jest.fn(() => Promise.resolve(null)),
