@@ -36,8 +36,22 @@ const BadgeColumn = styled.View`
 `
 
 export const TaskCard = React.memo<TaskCardProps>(({ todo, onPress }) => {
+  const priorityText =
+    todo.priority === 'high'
+      ? 'Alta'
+      : todo.priority === 'medium'
+        ? 'Média'
+        : 'Baixa'
+  const statusText = todo.completed ? 'Concluída' : 'Pendente'
+
   return (
-    <TaskItem onPress={() => onPress(todo.id)}>
+    <TaskItem
+      onPress={() => onPress(todo.id)}
+      testID="task-card"
+      accessible={true}
+      accessibilityRole="button"
+      accessibilityLabel={`Tarefa: ${todo.title}. Prioridade: ${priorityText}. Status: ${statusText}`}
+    >
       <TaskHeader>
         <TaskInfo>
           <Typography

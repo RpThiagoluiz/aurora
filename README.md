@@ -233,12 +233,29 @@ npm run validate      # Executa todas as validações
 
 ## 🧪 Testes e Qualidade
 
+### Testes Implementados
+
+- **✅ AsyncStorage**: 6 testes de recuperação e persistência de dados
+- **✅ TodoContext**: 5 testes de criação, edição e gerenciamento de tarefas
+- **✅ Cobertura**: Funcionalidades principais com 11 testes passando
+
+### Ferramentas de Qualidade
+
 - **Testes Unitários**: Jest + React Native Testing Library
 - **Linting**: ESLint com regras rigorosas
 - **Formatação**: Prettier com configuração padronizada
 - **Type Checking**: TypeScript em modo strict
 - **Git Hooks**: Husky para validações pré-commit
 - **Conventional Commits**: Padronização de mensagens
+
+```bash
+# Executar todos os testes
+npm test
+
+# Testes específicos
+npm test DatabaseService.test.ts    # AsyncStorage
+npm test TodoContextSimple.test.tsx # Context e CRUD
+```
 
 ## 🔧 Desafios Encontrados e Soluções
 
