@@ -1,164 +1,263 @@
-# Aurora - Todo App
+# 🌅 Aurora - Todo App
 
 ## 📱 Sobre o Projeto
 
-Aurora é um gerenciador de tarefas moderno desenvolvido em React Native, criado como projeto de teste para posição sênior. Implementa arquitetura escalável, boas práticas de desenvolvimento e componentes reutilizáveis.
+**Aurora** é um aplicativo completo de gerenciamento de tarefas desenvolvido em React Native CLI, criado como resposta ao teste técnico da **SuitPay**. O app demonstra conhecimentos avançados em React Native, gerenciamento de estado, persistência de dados e boas práticas de desenvolvimento móvel.
 
-## 🎯 Funcionalidades
+## 🎬 Demonstração
 
-- ✅ **Gerenciamento de Tarefas**: Criar, editar e organizar tarefas
-- 🎨 **Sistema de Tema**: Tema escuro elegante e responsivo
-- 📱 **Navegação Intuitiva**: Tab navigation com React Navigation
-- 🔧 **Componentes Reutilizáveis**: Button e Typography padronizados
-- ✅ **Validação de Formulários**: React Hook Form + Zod
-- 🏗️ **Arquitetura Escalável**: Estrutura modular e tipada
+**📺 [Vídeo do App Funcionando](https://youtu.be/vkbUp4tk4y4)**
 
-## 🏗️ Arquitetura
+![Aurora Todo App Demo](https://img.shields.io/badge/Demo-YouTube-red?logo=youtube&logoColor=white)
 
-O projeto segue uma arquitetura modular e organizada:
+## ✅ Funcionalidades Implementadas
+
+### Funcionalidades Obrigatórias
+
+- ✅ **Listagem de Tarefas**: Exibição completa com status visual e data de criação
+- ✅ **Adicionar Tarefa**: Campo de input com validação para tarefas não vazias
+- ✅ **Marcar como Concluída**: Alternância de status com indicação visual clara
+- ✅ **Excluir Tarefa**: Remoção com confirmação via modal
+- ✅ **Persistência**: AsyncStorage mantém dados após fechamento do app
+- ✅ **Contador de Tarefas**: Exibição de totais (todas/concluídas/pendentes)
+
+### Diferenciais Implementados
+
+- 🎯 **Filtros Avançados**: Filtrar por status (todas/ativas/concluídas) com navegação dedicada
+- ✏️ **Edição de Tarefas**: Editar título de tarefas existentes
+- 🏷️ **Sistema de Prioridades**: Alta/Média/Baixa com cores diferenciadas
+- 🔍 **Busca por Texto**: Campo de pesquisa para filtrar tarefas
+- 🎨 **Animações Fluidas**:
+  - Fade-in na listagem de tarefas
+  - Crescimento animado do border-bottom nos cards de estatísticas
+  - Animação de mão acenando na saudação
+- 🌙 **Dark Theme**: Tema escuro elegante e consistente
+- 📊 **Dashboard Estatístico**: Cards interativos com filtros visuais
+
+## 🛠️ Tecnologias Utilizadas
+
+### Core
+
+- **React Native CLI** 0.82.1 (sem Expo)
+- **TypeScript** - Tipagem estática completa
+- **React Hooks** - useState, useEffect, useContext, useCallback, useMemo
+- **AsyncStorage** - Persistência local de dados
+
+### Navegação e Estado
+
+- **React Navigation v7** - Stack e Tab navigation
+- **Context API** - Gerenciamento de estado global (TodoContext, FilterContext, ThemeContext)
+- **Styled Components** - Estilização component-based
+
+### Formulários e Validação
+
+- **React Hook Form** - Gerenciamento eficiente de formulários
+- **Zod** - Validação robusta de schemas
+
+### UI/UX e Animações
+
+- **React Native Vector Icons** (Ionicons) - Ícones consistentes
+- **Animated API** - Animações nativas performáticas
+- **Safe Area Context** - Tratamento de áreas seguras
+
+### Qualidade de Código
+
+- **ESLint** + **Prettier** - Padronização e formatação
+- **Husky** + **CommitLint** - Git hooks e commits convencionais
+- **TypeScript Strict Mode** - Tipagem rigorosa
+
+## 🏗️ Arquitetura do Projeto
+
+O projeto segue uma arquitetura modular e escalável, organizada conforme sugerido no teste:
 
 ```
 src/
-├── shared/          # Componentes, tipos e utilitários compartilhados
-│   ├── components/  # Button, Typography, etc.
-│   ├── constants/   # Tema, cores, configurações
-│   ├── context/     # Context providers (Theme)
-│   └── types/       # Interfaces TypeScript
-├── modules/         # Módulos específicos (todo, auth, etc.)
-├── hooks/           # Custom hooks reutilizáveis
-├── navigation/      # Configuração de navegação
-├── screens/         # Telas principais
-└── services/        # Serviços (database, API)
+├── shared/              # Componentes e utilitários compartilhados
+│   ├── components/      # Button, Typography, Loading, Badges
+│   ├── constants/       # Configurações de tema e cores
+│   ├── context/         # Context providers (Theme, Todo, Filter)
+│   ├── styles/          # Styled provider e configurações globais
+│   ├── types/           # Interfaces TypeScript globais
+│   └── utils/           # Utilitários para cores, datas, prioridades
+├── modules/             # Módulos específicos por funcionalidade
+│   ├── todo/           # Módulo principal de tarefas
+│   │   ├── components/ # TaskCard, TaskForm
+│   │   └── screens/    # HomeScreen, TodoDetailScreen, FilterScreen
+│   └── settings/       # Módulo de configurações
+├── navigation/          # Configuração de navegação
+│   ├── AppNavigator.tsx    # Tab navigation principal
+│   └── StackNavigator.tsx  # Stack navigation com modais
+├── services/            # Camada de serviços
+│   ├── database/       # DatabaseService com AsyncStorage
+│   └── api/           # Preparado para APIs futuras
+├── hooks/              # Custom hooks reutilizáveis
+└── types/              # Definições TypeScript específicas
 ```
 
-## � Documentação
+## 📚 Documentação Técnica
 
-- **[📦 Componentes](./COMPONENTS.md)** - Button e Typography components
-- **[🧭 Navegação](./NAVIGATION.md)** - Sistema de navegação e estrutura
-- **[🎨 Tema](./THEME.md)** - Sistema de cores e tema escuro
+- **[📦 Componentes](./docs/COMPONENTS.md)** - Sistema de design e componentes
+- **[🧭 Navegação](./docs/NAVIGATION.md)** - Estrutura de navegação
+- **[🎨 Tema](./docs/THEME.md)** - Sistema de cores e temas
+- **[📋 Especificações](./docs/challenger.md)** - Requisitos originais do teste
 
-## �🛠️ Tecnologias Utilizadas
+## Imagens
 
-- **React Native** 0.82.1
-- **TypeScript** - Tipagem estática completa
-- **React Navigation v6** - Navegação por tabs
-- **React Hook Form** - Gerenciamento de formulários
-- **Zod** - Validação de schemas
-- **ESLint** - Linting rigoroso para código sênior
-- **Prettier** - Formatação consistente
-- **Husky** - Git hooks para validações
-- **CommitLint** - Padronização de commits convencionais
-- **GitHub Actions** - CI/CD pipeline
+- **[🎨 Img](./docs/IMAGES.md)** - Prints das telas, mas aconselho a ver o **📺 [Vídeo do App](https://youtu.be/vkbUp4tk4y4)**
 
-## 🎨 Design System
-
-### Componentes Principais
-
-- **Button**: Variantes primary/secondary com loading states
-- **Typography**: Sistema completo de tipografia (h1-h3, body, caption)
-- **Theme Provider**: Gerenciamento centralizado de cores
-
-### Paleta de Cores (Dark Theme)
-
-- **Primary**: `#0A84FF` - Azul principal
-- **Background**: `#000000` / `#1E1E1E` - Fundos escuros
-- **Text**: `#E0E0E0` / `#A0A0A0` - Textos claros
-- **Status**: Verde/Vermelho para sucesso/erro
-
-## 🚀 Configuração de Desenvolvimento
+## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
 
-> **Nota**: Certifique-se de ter completado o [Guia de Configuração do Ambiente](https://reactnative.dev/docs/set-up-your-environment) antes de prosseguir.
+> **Importante**: Certifique-se de ter completado o [Guia de Configuração do Ambiente React Native](https://reactnative.dev/docs/set-up-your-environment) antes de prosseguir.
 
-## Step 1: Start Metro
+- **Node.js** >= 20.x
+- **React Native CLI** (não Expo)
+- **Android Studio** (para Android)
+- **Xcode** (para iOS - apenas macOS)
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### Instalação
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+1. **Clone o repositório**
 
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+```bash
+git clone https://github.com/RpThiagoluiz/aurora.git
+cd aurora
 ```
 
-## Step 2: Build and run your app
+2. **Instale as dependências**
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+npm install
 ```
 
-### iOS
+3. **Para iOS (apenas macOS)**
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
+```bash
+cd ios
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
 bundle exec pod install
+cd ..
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### Executando o Projeto
 
-```sh
-# Using npm
+1. **Inicie o Metro Server**
+
+```bash
+npm start
+```
+
+2. **Execute no Android**
+
+```bash
+npm run android
+```
+
+3. **Execute no iOS**
+
+```bash
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Scripts Disponíveis
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```bash
+npm run android        # Executa no Android
+npm run ios           # Executa no iOS
+npm start             # Inicia o Metro bundler
+npm test              # Executa os testes
+npm run lint          # Executa o ESLint
+npm run lint:fix      # Corrige problemas do ESLint automaticamente
+npm run format        # Formata código com Prettier
+npm run type-check    # Verifica tipagem TypeScript
+npm run validate      # Executa todas as validações
+```
 
-## Step 3: Modify your app
+## 🎨 Design System
 
-Now that you have successfully run the app, let's make changes!
+### Paleta de Cores (Dark Theme)
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- **Primary**: `#6366F1` - Índigo vibrante
+- **Success**: `#10B981` - Verde sucesso
+- **Warning**: `#F59E0B` - Laranja atenção
+- **Error**: `#EF4444` - Vermelho erro
+- **Background**: `#0F0F0F` / `#1A1A1A` - Fundos escuros
+- **Text**: `#E5E7EB` / `#9CA3AF` - Textos claros
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### Componentes Principais
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+- **Button**: Variantes com estados de loading e disabled
+- **Typography**: Sistema completo (h1-h3, body1-body2, caption)
+- **TaskCard**: Card de tarefa com status, prioridade e animações
+- **PriorityBadge**: Badge colorido para nível de prioridade
+- **StatusBadge**: Indicador visual de status da tarefa
 
-## Congratulations! :tada:
+## 📱 Funcionalidades Detalhadas
 
-You've successfully run and modified your React Native App. :partying_face:
+### Dashboard Principal
 
-### Now what?
+- Cards estatísticos interativos com animação de border
+- Saudação personalizada com animação de mão
+- Filtros rápidos (Todas/Concluídas/Pendentes)
+- Listagem otimizada com FlatList e fade-in
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+### Gerenciamento de Tarefas
 
-# Troubleshooting
+- Criação com validação em tempo real
+- Edição inline do título
+- Sistema de prioridades (Alta/Média/Baixa)
+- Status visual claro (completa/pendente)
+- Exclusão com confirmação
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+### Filtros e Busca
 
-# Learn More
+- Tela dedicada para filtros avançados
+- Busca por texto em tempo real
+- Filtro por prioridade
+- Combinação múltipla de filtros
+- Estado persistente entre sessões
 
-To learn more about React Native, take a look at the following resources:
+### Persistência de Dados
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- AsyncStorage para armazenamento local
+- Salvamento automático em todas as operações
+- Recovery de estado na inicialização
+- Tratamento de erros de I/O
+
+## 🧪 Testes e Qualidade
+
+- **Testes Unitários**: Jest + React Native Testing Library
+- **Linting**: ESLint com regras rigorosas
+- **Formatação**: Prettier com configuração padronizada
+- **Type Checking**: TypeScript em modo strict
+- **Git Hooks**: Husky para validações pré-commit
+- **Conventional Commits**: Padronização de mensagens
+
+## 🔧 Desafios Encontrados e Soluções
+
+### 1. **Construção de UI/UX Intuitiva**
+
+- **Desafio**: Criar telas com um mínimo de UX para proporcionar uma boa experiência ao usuário
+- **Solução**: Implementação de um design system consistente com feedback visual claro, animações suaves e navegação intuitiva entre as funcionalidades
+
+### 2. **Configuração de Ícones no React Native CLI**
+
+- **Desafio**: Vindo do dia a dia com Expo, a configuração de ícones diretamente no React Native nativo apresentou particularidades específicas
+- **Solução**: Pesquisa aprofundada sobre react-native-vector-icons, configuração manual dos assets nativos e ajustes específicos para Android/iOS
+
+### 3. **Animações Performáticas**
+
+- **Desafio**: Animações suaves sem impacto na performance
+- **Solução**: Animated API nativa com useNativeDriver quando possível
+
+## 👨‍💻 Desenvolvedor
+
+**Thiago Luiz**
+
+- GitHub: [@RpThiagoluiz](https://github.com/RpThiagoluiz)
+- LinkedIn: [Thiago Luiz](https://www.linkedin.com/in/thiago-luiz-0984191a7)
+
+---
+
+_Desenvolvido com ❤️ e React Native_
