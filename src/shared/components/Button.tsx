@@ -118,7 +118,7 @@ export const Button = ({
     if (disabled || loading) {
       return '#A0A0A0' // colors.BACKGROUND_SECONDARY equivalent
     }
-    return variant === 'primary' ? '#FFFFFF' : undefined // Let styled handle it
+    return variant === 'primary' ? '#FFFFFF' : '#FFFFFF'
   }
 
   const hasIcon = !!(icon || iconName)

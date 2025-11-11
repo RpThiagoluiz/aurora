@@ -9,7 +9,7 @@ import { StatusBar } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import { AppNavigator } from './src/navigation'
-import { ThemeProvider, StyledProvider } from './src/shared'
+import { ThemeProvider, StyledProvider, TodoProvider } from './src/shared'
 import { useTheme } from './src/hooks'
 
 function AppContent() {
@@ -31,7 +31,9 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <TodoProvider>
+        <AppContent />
+      </TodoProvider>
     </ThemeProvider>
   )
 }

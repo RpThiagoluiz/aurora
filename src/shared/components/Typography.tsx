@@ -1,6 +1,7 @@
 import React from 'react'
 import { TextProps } from 'react-native'
 import styled from 'styled-components/native'
+import { getTypographyColor } from '../utils'
 
 export type TypographyVariant =
   | 'h1'
@@ -96,25 +97,7 @@ const StyledText = styled.Text<{
     }
   }}
 
-  ${props => {
-    const theme = props.theme as any
-    switch (props.colorType) {
-      case 'primary':
-        return `color: ${theme.colors.TEXT_PRIMARY};`
-      case 'secondary':
-        return `color: ${theme.colors.TEXT_SECONDARY};`
-      case 'error':
-        return `color: ${theme.colors.STATUS_DELETE};`
-      case 'success':
-        return `color: ${theme.colors.STATUS_COMPLETE};`
-      case 'warning':
-        return `color: ${theme.colors.WARNING};`
-      case 'accent':
-        return `color: ${theme.colors.ACCENT_PRIMARY};`
-      default:
-        return `color: ${theme.colors.TEXT_PRIMARY};`
-    }
-  }}
+  color: ${props => getTypographyColor(props.colorType, props.theme as any)};
 `
 
 export const Typography: React.FC<TypographyProps> = ({

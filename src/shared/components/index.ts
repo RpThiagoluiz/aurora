@@ -1,3 +1,6 @@
 export { Button } from './Button'
+export { Loading } from './Loading'
+export { PriorityBadge } from './PriorityBadge'
+export { StatusBadge } from './StatusBadge'
 export { ExampleComponent } from './ExampleComponent'
 export { Typography } from './Typography'

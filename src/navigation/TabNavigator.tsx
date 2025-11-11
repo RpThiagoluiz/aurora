@@ -16,7 +16,6 @@ export type TabParamList = {
 
 const Tab = createBottomTabNavigator<TabParamList>()
 
-// Helper para criar estilos do tab navigator
 const getTabBarStyles = (colors: Colors) => ({
   tabBarStyle: {
     backgroundColor: colors.BACKGROUND_SECONDARY,
@@ -68,7 +67,7 @@ export const TabNavigator = () => {
     return (
       <Icon
         name={iconName}
-        size={size}
+        size={focused ? size * 1.1 : size}
         color={focused ? colors.ACCENT_PRIMARY : colors.TEXT_SECONDARY}
       />
     )
@@ -88,10 +87,10 @@ export const TabNavigator = () => {
       initialRouteName="Home"
     >
       <Tab.Screen
-        name="AddTodo"
-        component={AddTodoScreen}
+        name="Settings"
+        component={SettingsScreen}
         options={{
-          headerTitle: 'Nova Tarefa',
+          headerTitle: 'Configurações',
         }}
       />
 
@@ -102,12 +101,11 @@ export const TabNavigator = () => {
           headerTitle: 'Aurora',
         }}
       />
-
       <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
+        name="AddTodo"
+        component={AddTodoScreen}
         options={{
-          headerTitle: 'Configurações',
+          headerTitle: 'Nova Tarefa',
         }}
       />
     </Tab.Navigator>
