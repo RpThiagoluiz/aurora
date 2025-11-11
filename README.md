@@ -2,7 +2,7 @@
 
 ## 📱 Sobre o Projeto
 
-**Aurora** é um aplicativo completo de gerenciamento de tarefas desenvolvido em React Native CLI, criado como resposta ao teste técnico da **SuitPay**. O app demonstra conhecimentos avançados em React Native, gerenciamento de estado, persistência de dados e boas práticas de desenvolvimento móvel.
+**Aurora** é um aplicativo completo de gerenciamento de tarefas desenvolvido em React Native CLI. O app demonstra conhecimentos avançados em React Native, gerenciamento de estado, persistência de dados e boas práticas de desenvolvimento móvel.
 
 ## ⏱️ Tempo de Desenvolvimento
 
